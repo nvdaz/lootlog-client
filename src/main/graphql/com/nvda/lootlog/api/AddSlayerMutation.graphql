@@ -1,0 +1,17 @@
+mutation AddSlayerMutation(
+  $slayerType: SlayerType!
+  $rewards: [SlayerRewardInput!]!
+  $tier: Int!
+) {
+  addSlayer(slayerType: $slayerType, rewards: $rewards, tier: $tier) {
+    _id
+    slayerType
+    tier
+    gross
+    rewards {
+      reward
+      count
+      appraisal
+    }
+  }
+}

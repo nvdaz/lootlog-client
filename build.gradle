@@ -1,0 +1,117 @@
+
+// For those who want the bleeding edge
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
+buildscript {
+    repositories {
+        jcenter()
+        google()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url = uri("https://dl.bintray.com/apollographql/android/") }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'com.apollographql.apollo:apollo-gradle-plugin:0.4.2'
+    }
+
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.apollographql.android'
+
+idea {
+    module {
+        sourceDirs += file("${buildDir}/generated/source/apollo")
+        generatedSourceDirs += file("${buildDir}/generated/source/apollo")
+    }
+}
+
+apollo {
+    schemaFilePath = "src/main/graphql/com/nvda/lootlog/api/schema.json"
+//    graphqlSourceDirectorySet = "src/main/graphql/com/nvda/lootlog/api/"
+    outputPackageName = "com.nvda.lootlog.api"
+//    customTypeMapping['RegExp'] = 'java.util.regex.Pattern'
+//    customTypeMapping['Date'] = 'java.time.Instant'
+    customTypeMapping = [
+            RegExp: "java.util.regex.Pattern",
+            Date :"java.time.Instant"
+    ]
+}
+
+targetCompatibility = "1.8"
+sourceCompatibility = "1.8"
+version = "2.1.0-alpha.0.7"
+group= "com.nvda.lootlog"
+archivesBaseName = "lootlog"
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    mappings = "stable_20"
+
+    replace "__VERSION__", project.version
+    replaceIn "LootLog.java"
+}
+
+repositories {
+    jcenter()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url = uri("https://dl.bintray.com/apollographql/android/") }
+}
+
+dependencies {
+    shadow 'com.apollographql.apollo:apollo-runtime:0.4.2'
+    shadow 'com.apollographql.apollo:apollo-normalized-cache:2.0.0'
+    shadow 'com.squareup.okhttp3:okhttp:4.4.0'
+    provided files('libs/sbnotifications-0.0.1.jar')
+}
+
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    exclude 'xyz.nvda.sbnotifications'
+}
+
+reobf {
+    shadowJar {
+        exclude 'xyz.nvda.sbnotifications'
+    }
+}
+
+task relocateShadowJar(type: ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = "com.nvda.lootlog.shadow" // Default value is "shadow"
+
+}
+
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
+
+processResources
+{
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+sourceSets{
+    sourceSets -> main
+}
+
+task rmbuilddir(type: Delete) {
+    delete rootProject.buildDir
+}

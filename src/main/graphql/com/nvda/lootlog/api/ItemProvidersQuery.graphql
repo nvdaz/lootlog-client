@@ -1,0 +1,26 @@
+query ItemProvidersQuery {
+  dragonItemProviders {
+    test
+    mode
+    minecraftItem
+    texture
+    item
+    metadata
+  }
+  slayerItemProviders {
+    test
+    mode
+    minecraftItem
+    texture
+    item
+    metadata
+  }
+  golemItemProviders {
+    test
+    mode
+    minecraftItem
+    texture
+    item
+    metadata
+  }
+}

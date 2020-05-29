@@ -1,0 +1,19 @@
+mutation AddDragonMutation(
+  $dragonType: DragonType!
+  $eyesPlaced: Int!
+  $rewards: [DragonRewardInput!]!
+  $day: Int!
+  $leaderboardPlacement: Int!
+) {
+  addDragon(
+    dragonType: $dragonType
+    eyesPlaced: $eyesPlaced
+    rewards: $rewards
+    day: $day
+    leaderboardPlacement: $leaderboardPlacement
+  ) {
+    _id
+    dragonType
+    gross
+  }
+}

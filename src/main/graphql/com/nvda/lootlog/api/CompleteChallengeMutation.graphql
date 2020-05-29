@@ -1,0 +1,3 @@
+mutation CompleteChallengeMutation($token: String!) {
+    token: completeChallenge(token: $token)
+}

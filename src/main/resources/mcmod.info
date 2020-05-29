@@ -1,0 +1,13 @@
+[
+  {
+    "modid": "lootlog",
+    "name": "Loot Log",
+    "description": "Track loot",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["nvda"],
+    "dependencies": ["sbnotifications"]
+  }
+]

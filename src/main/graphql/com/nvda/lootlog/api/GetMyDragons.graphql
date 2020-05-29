@@ -1,0 +1,16 @@
+query GetMyDragons($utcOffset: Int!, $limit: Int!) {
+  currentUser {
+    _id
+    displayName
+    dragons(limit: $limit, utcOffset: $utcOffset) {
+      _id
+      dragonType
+      gross
+    }
+    dragonOverviews {
+      _id
+      day
+      gross
+    }
+  }
+}

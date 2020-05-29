@@ -1,0 +1,6 @@
+mutation SetVersionMutation($version: String!) {
+  setVersion(version: $version) {
+    changelog
+    isCurrent
+  }
+}

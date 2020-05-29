@@ -1,0 +1,16 @@
+query NotableSlayersQuery($slayerType: SlayerType!, $limit: Int!) {
+  currentUser {
+    _id
+    slayerXp(slayerType: $slayerType)
+    notableSlayers(slayerType: $slayerType, limit: $limit) {
+      _id
+      slayerType
+      gross
+      rewards {
+        reward
+        count
+        appraisal
+      }
+    }
+  }
+}

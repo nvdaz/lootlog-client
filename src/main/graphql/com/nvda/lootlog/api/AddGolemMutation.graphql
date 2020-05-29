@@ -1,0 +1,6 @@
+mutation AddGolemMutation($rewards: [GolemRewardInput!]!, $leaderboardPlacement: Int!) {
+  addGolem(rewards: $rewards, leaderboardPlacement: $leaderboardPlacement) {
+    _id
+    revenue
+  }
+}

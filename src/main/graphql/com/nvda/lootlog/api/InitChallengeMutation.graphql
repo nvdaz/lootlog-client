@@ -1,0 +1,6 @@
+mutation InitChallengeMutation($uuid: ID!){
+  initChallenge(uuid: $uuid) {
+    token
+    serverID
+  }
+}
