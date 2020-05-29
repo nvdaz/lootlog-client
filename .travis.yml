@@ -13,7 +13,8 @@ deploy:
     secure: QH4qv59WS10RUxzqfjITOmYtWS8+3FtpMHQCy42owkXcUHzZ376ofpEfFEJ7PdgK591mWeexe4hWWH+unWw1fSLxwfkqXLe85JjpBEw/S6b5t36TDmENYS5rprr4HQLxhv0UJEMYXSBqlvPiozhF7b2P/voa7M/DgIQi0+IKhY3dwwD5h1VqpKOdPwcy9x0VmYcCXbMV2MPJZOnlXAUOU3Vayr47SAC4CAAzKVCihnf8/iML+MSVfkMAtRV9MYPC3ciJ2MEMmwnWXcKXuFRLO8PQcaPidUQywE2QC8jEIbRdYPDmsQNkhbTKXtuwkP+Pia/XJlh5OilWNpvHmjqFRzv+1XYn+xrLLFr2HYQmUqjb0LY+22PZJKoyponKSQv03X9dvhqOCPI+XqSzRb5zXAj+A49gsKCABHrG993/059xG4zfpIiNreWeUdMq9MUuFuwTeWKiftUn+nqdb51moXK/HsZTQtbrPXHzbdaRpJ9YJEWAVJiu08kGQUjVDm+Q5oed2g2EFP3lnOhvOGba9dinqP3fipzTxKA2QZM233KSGId5m8pd6wpXQPyQxxVVJHbutH/pKzb6mREfN5dXJDCA5brMrqtMfZSV6a9a3Nudoqla5drH17fK4uryc/9sYfCHbXAPajz/9CjryFDWaZVdV5xraO6p2L0/uwSWwf0=
   bucket: static.lootlog.app
   upload-dir: build
-  acl: ''
+  glob: "build/libs/*.jar"
+  acl: public_read
   on:
     repo: nvdaz/lootlog-client
-  skip_cleanup: 'true'
+  skip_cleanup: true
