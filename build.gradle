@@ -36,10 +36,7 @@ idea {
 
 apollo {
     schemaFilePath = "src/main/graphql/com/nvda/lootlog/api/schema.json"
-//    graphqlSourceDirectorySet = "src/main/graphql/com/nvda/lootlog/api/"
     outputPackageName = "com.nvda.lootlog.api"
-//    customTypeMapping['RegExp'] = 'java.util.regex.Pattern'
-//    customTypeMapping['Date'] = 'java.time.Instant'
     customTypeMapping = [
             RegExp: "java.util.regex.Pattern",
             Date :"java.time.Instant"

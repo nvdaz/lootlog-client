@@ -7,6 +7,8 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy.ExpirePolicy;
 import com.apollographql.apollo.exception.ApolloException;
+import com.nvda.lootlog.BossHandler.BossItemProvider;
+import com.nvda.lootlog.BossHandler.BossReward;
 import com.nvda.lootlog.IBossHandler.LoadProvidersResult;
 import com.nvda.lootlog.api.ItemProvidersQuery;
 import com.nvda.lootlog.api.ItemProvidersQuery.Data;
@@ -34,7 +36,8 @@ public abstract class BossHandler<
         D extends Operation.Data,
         V extends Operation.Variables,
         M extends Mutation<D, D, V>,
-        R extends BossHandler<?, ?, ?, ?, T>.Reward<?>,
+                                 I,
+//        R extends BossReward<?, T, ? extends BossItemProvider<T>>,
         T extends Enum<T>> {
 
   protected static final ApolloProvider apolloProvider = ApolloProvider.getInstance();
@@ -44,11 +47,11 @@ public abstract class BossHandler<
 
   protected final List<ItemProvider> itemProviders = new ArrayList<>();
 
-  protected final List<R> rewards;
+  protected final List<Reward> rewards = new ArrayList<>();
 
-  protected BossHandler(List<R> rewards) {
-    this.rewards = rewards;
-  }
+//  protected BossHandler(List<R> rewards) {
+//    this.rewards = rewards;
+//  }
 
   public abstract boolean testChat(IChatComponent chatComponent);
 
@@ -62,20 +65,20 @@ public abstract class BossHandler<
 
   protected abstract void handleAddMutation(D data);
 
-  protected abstract R newReward(ItemProvider itemProvider);
+  protected abstract Reward newReward(ItemProvider itemProvider);
 
   /** @return whether the item provider is new */
   protected boolean addReward(ItemProvider itemProvider, int count) {
-    Optional<R> r =
+    Optional<Reward> r =
         this.rewards.stream().filter(reward -> reward.type == itemProvider.rewardType).findFirst();
 
     if (r.isPresent()) {
-      R reward = r.get();
+      Reward reward = r.get();
       reward.count(reward.count + count);
       return false;
     }
 
-    R reward = this.newReward(itemProvider);
+    Reward reward = this.newReward(itemProvider);
     reward.count(count);
     this.rewards.add(reward);
     return true;
@@ -274,10 +277,6 @@ public abstract class BossHandler<
       this.count = count;
     }
 
-    boolean matches() {
-      return this.count > 0;
-    }
-
     abstract I toRewardInput();
   }
 
@@ -287,7 +286,7 @@ public abstract class BossHandler<
     }
   }
 
-  protected abstract class Reward<I> extends BossReward<I, T, ItemProvider> {
+  protected abstract class Reward extends BossReward<I, T, ItemProvider> {
     Reward(ItemProvider itemProvider) {
       super(itemProvider);
     }

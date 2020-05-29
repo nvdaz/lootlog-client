@@ -6,7 +6,6 @@ import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.exception.ApolloException;
 import com.nvda.lootlog.ChatPattern.MatchType;
 import com.nvda.lootlog.Dragon.DragonOverview;
-import com.nvda.lootlog.DragonHandler.DragonReward;
 import com.nvda.lootlog.api.AddDragonMutation;
 import com.nvda.lootlog.api.AddDragonMutation.AddDragon;
 import com.nvda.lootlog.api.GetMyDragonsQuery;
@@ -35,7 +34,8 @@ public class DragonHandler
         AddDragonMutation.Data,
         AddDragonMutation.Variables,
         AddDragonMutation,
-        DragonReward,
+        DragonRewardInput,
+        //        DragonReward,
         DragonRewardType> {
 
   private static final ChatPattern DRAGON_PATTERN =
@@ -56,11 +56,6 @@ public class DragonHandler
       new ChatPattern("^.? The Dragon Egg has spawned!$", MatchType.UNFORMATTED);
 
   private static final DragonHandler instance = new DragonHandler();
-
-  public static DragonHandler getInstance() {
-    return instance;
-  }
-
   private final GetMyDragonsQuery getMyDragonsQuery =
       new GetMyDragonsQuery(
           -(ZoneOffset.systemDefault().getRules().getOffset(Instant.now()).getTotalSeconds()) / 60,
@@ -71,11 +66,13 @@ public class DragonHandler
   private int day = 1;
   private int leaderboardPlacement = 1;
 
-  private DragonHandler() {
-    super(new ArrayList<>());
+  private DragonHandler() {}
+
+  public static DragonHandler getInstance() {
+    return instance;
   }
 
-  protected DragonReward newReward(ItemProvider itemProvider) {
+  protected Reward newReward(ItemProvider itemProvider) {
     return new DragonReward(itemProvider);
   }
 
@@ -97,11 +94,7 @@ public class DragonHandler
     return AddDragonMutation.builder()
         .dragonType(this.dragonType)
         .eyesPlaced(this.eyesPlaced)
-        .rewards(
-            this.rewards.stream()
-                .filter(DragonReward::matches)
-                .map(DragonReward::toRewardInput)
-                .collect(Collectors.toList()))
+        .rewards(this.rewards.stream().map(BossReward::toRewardInput).collect(Collectors.toList()))
         .day(this.day)
         .leaderboardPlacement(this.leaderboardPlacement)
         .build();
@@ -280,7 +273,7 @@ public class DragonHandler
             });
   }
 
-  class DragonReward extends Reward<DragonRewardInput> {
+  class DragonReward extends Reward {
 
     public DragonReward(ItemProvider itemProvider) {
       super(itemProvider);

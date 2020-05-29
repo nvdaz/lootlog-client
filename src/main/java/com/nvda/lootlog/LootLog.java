@@ -1,5 +1,6 @@
 package com.nvda.lootlog;
 
+import com.nvda.lootlog.IBossHandler.LoadProvidersResult;
 import com.nvda.lootlog.handlers.ArmorStandRewardHandler;
 import com.nvda.lootlog.handlers.ChatReceivedHandler;
 import com.nvda.lootlog.handlers.ClientConnectedHandler;
@@ -24,7 +25,7 @@ public class LootLog {
   public static final String MODID = "lootlog";
   public static final String VERSION = "__VERSION__";
 
-  public  static final List<BossHandler<?, ?, ?, ?, ?>> bossHandlers =
+  public static final List<BossHandler<?, ?, ?, ?, ?>> bossHandlers =
       Arrays.asList(
           new BossHandler<?, ?, ?, ?, ?>[] {
             DragonHandler.getInstance(), SlayerHandler.getInstance(), GolemHandler.getInstance()
@@ -54,7 +55,7 @@ public class LootLog {
                       bossHandler.loadProviders(
                           result ->
                               System.out.println(
-                                  (result == BossHandler.LoadProvidersResult.SUCCESS
+                                  (result == LoadProvidersResult.SUCCESS
                                           ? "Loaded "
                                           : "Could not load ")
                                       + bossHandler.getClass().getName()

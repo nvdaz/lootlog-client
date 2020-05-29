@@ -4,7 +4,6 @@ import com.apollographql.apollo.ApolloCall.Callback;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.exception.ApolloException;
-import com.nvda.lootlog.SlayerHandler.SlayerReward;
 import com.nvda.lootlog.api.AddSlayerMutation;
 import com.nvda.lootlog.api.AddSlayerMutation.AddSlayer;
 import com.nvda.lootlog.api.AddSlayerMutation.Data;
@@ -34,7 +33,7 @@ public class SlayerHandler
         AddSlayerMutation.Data,
         AddSlayerMutation.Variables,
         AddSlayerMutation,
-        SlayerReward,
+        SlayerRewardInput,
         SlayerRewardType> {
   private static final Pattern START_PATTERN =
       Pattern.compile(
@@ -54,24 +53,19 @@ public class SlayerHandler
           put(4, 500);
         }
       };
-
-  public static SlayerHandler getInstance() {
-    return instance;
-  }
-
-  private SlayerHandler() {
-    super(new ArrayList<>());
-  }
-
   private final Map<SlayerType, NotableSlayersQuery> notableSlayersQueryMap =
       Arrays.stream(SlayerType.values())
           .collect(Collectors.toMap(type -> type, type -> new NotableSlayersQuery(type, 3)));
   private CurrentUser currentUser;
-
   private DelayedTask delayedTask;
-
   private SlayerType slayerType;
   private int tier;
+
+  private SlayerHandler() {}
+
+  public static SlayerHandler getInstance() {
+    return instance;
+  }
 
   public List<NotableSlayersQuery.NotableSlayer> slayers() {
     return new ArrayList<>(
@@ -88,11 +82,7 @@ public class SlayerHandler
     return AddSlayerMutation.builder()
         .slayerType(this.slayerType)
         .tier(this.tier)
-        .rewards(
-            this.rewards.stream()
-                .filter(SlayerReward::matches)
-                .map(Reward::toRewardInput)
-                .collect(Collectors.toList()))
+        .rewards(this.rewards.stream().map(BossReward::toRewardInput).collect(Collectors.toList()))
         .build();
   }
 
@@ -255,7 +245,7 @@ public class SlayerHandler
             });
   }
 
-  public class SlayerReward extends Reward<SlayerRewardInput> {
+  public class SlayerReward extends Reward {
     SlayerReward(ItemProvider itemProvider) {
       super(itemProvider);
     }

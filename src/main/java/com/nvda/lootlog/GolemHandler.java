@@ -1,16 +1,14 @@
 package com.nvda.lootlog;
 
-import com.nvda.lootlog.GolemHandler.GolemReward;
+import com.nvda.lootlog.ChatPattern.MatchType;
+import com.nvda.lootlog.IBossHandler.LoadProvidersResult;
 import com.nvda.lootlog.api.AddGolemMutation;
 import com.nvda.lootlog.api.AddGolemMutation.AddGolem;
 import com.nvda.lootlog.api.AddGolemMutation.Data;
 import com.nvda.lootlog.api.ItemProvidersQuery;
 import com.nvda.lootlog.api.type.GolemRewardInput;
 import com.nvda.lootlog.api.type.GolemRewardType;
-import com.nvda.lootlog.api.type.MatchType;
 import com.nvda.lootlog.util.DelayedTask;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -20,7 +18,11 @@ import net.minecraft.util.IChatComponent;
 
 public class GolemHandler
     extends BossHandler<
-        AddGolemMutation.Data, AddGolemMutation.Variables, AddGolemMutation, GolemReward, GolemRewardType> {
+        AddGolemMutation.Data,
+        AddGolemMutation.Variables,
+        AddGolemMutation,
+        GolemRewardInput,
+        GolemRewardType> {
   private static final ChatPattern SPAWN_PATTERN =
       new ChatPattern("^An Endstone Protector is spawning!$", MatchType.UNFORMATTED);
   private static final ChatPattern LEADERBOARD_PATTERN =
@@ -28,21 +30,16 @@ public class GolemHandler
           "^ +Your Damage: [\\d,]+ (?:\\(NEW RECORD!\\) )?\\(Position #(\\d{1,2})\\)$",
           MatchType.UNFORMATTED);
   private static final GolemHandler instance = new GolemHandler();
+  private DelayedTask delayedTask;
+  private int leaderboardPlacement = 1;
+  private long endedAt;
+  private boolean spawned = false;
 
-  private GolemHandler() {
-    super(new ArrayList<>());
-  }
+  private GolemHandler() {}
 
   public static GolemHandler getInstance() {
     return instance;
   }
-
-  private DelayedTask delayedTask;
-
-  private final List<GolemReward> rewards = new ArrayList<>();
-  private int leaderboardPlacement = 1;
-  private long endedAt;
-  private boolean spawned = false;
 
   public boolean testChat(IChatComponent chatComponent) {
     Matcher spawnMatcher = SPAWN_PATTERN.matcher(chatComponent);
@@ -98,11 +95,7 @@ public class GolemHandler
   protected AddGolemMutation build() {
     return AddGolemMutation.builder()
         .leaderboardPlacement(leaderboardPlacement)
-        .rewards(
-            rewards.stream()
-                .filter(GolemReward::matches)
-                .map(GolemReward::toRewardInput)
-                .collect(Collectors.toList()))
+        .rewards(rewards.stream().map(BossReward::toRewardInput).collect(Collectors.toList()))
         .build();
   }
 
@@ -134,7 +127,7 @@ public class GolemHandler
     return data.golemItemProviders().stream().map(ItemProvider::new);
   }
 
-  public class GolemReward extends Reward<GolemRewardInput> {
+  public class GolemReward extends Reward {
     GolemReward(ItemProvider itemProvider) {
       super(itemProvider);
     }
