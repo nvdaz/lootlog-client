@@ -7,6 +7,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy.ExpirePolicy;
 import com.apollographql.apollo.exception.ApolloException;
+import com.nvda.lootlog.IBossHandler.LoadProvidersResult;
 import com.nvda.lootlog.api.ItemProvidersQuery;
 import com.nvda.lootlog.api.ItemProvidersQuery.Data;
 import com.nvda.lootlog.api.type.RewardTestMode;
@@ -34,8 +35,7 @@ public abstract class BossHandler<
         V extends Operation.Variables,
         M extends Mutation<D, D, V>,
         R extends BossHandler<?, ?, ?, ?, T>.Reward<?>,
-        T extends Enum<T>>
-    implements IBossHandler<T> {
+        T extends Enum<T>> {
 
   protected static final ApolloProvider apolloProvider = ApolloProvider.getInstance();
   protected static final ExpirePolicy itemProvidersCachePolicy =
@@ -281,13 +281,13 @@ public abstract class BossHandler<
     abstract I toRewardInput();
   }
 
-  class ItemProvider extends BossItemProvider<T> {
+  protected class ItemProvider extends BossItemProvider<T> {
     public <P> ItemProvider(P generatedItemProvider) {
       super(generatedItemProvider);
     }
   }
 
-  abstract class Reward<I> extends BossReward<I, T, ItemProvider> {
+  protected abstract class Reward<I> extends BossReward<I, T, ItemProvider> {
     Reward(ItemProvider itemProvider) {
       super(itemProvider);
     }

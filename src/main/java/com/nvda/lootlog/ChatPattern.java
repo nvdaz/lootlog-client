@@ -1,7 +1,5 @@
 package com.nvda.lootlog;
 
-import com.nvda.lootlog.api.type.MatchType;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.util.IChatComponent;
@@ -22,6 +20,11 @@ public class ChatPattern {
         matchType == MatchType.FORMATTED
             ? chatComponent.getFormattedText()
             : StringUtils.stripControlCodes(chatComponent.getUnformattedText()));
+  }
+
+  public enum MatchType {
+    FORMATTED,
+    UNFORMATTED
   }
 
 }

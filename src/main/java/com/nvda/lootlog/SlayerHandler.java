@@ -90,7 +90,7 @@ public class SlayerHandler
         .tier(this.tier)
         .rewards(
             this.rewards.stream()
-                .filter(Reward::matches)
+                .filter(SlayerReward::matches)
                 .map(Reward::toRewardInput)
                 .collect(Collectors.toList()))
         .build();
