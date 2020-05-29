@@ -1,10 +1,9 @@
 package com.nvda.lootlog;
 
-import com.nvda.lootlog.BossHandler.LoadProvidersResult;
+import com.nvda.lootlog.IBossHandler.LoadProvidersResult;
 import com.nvda.lootlog.hud.DragonHUD;
 import com.nvda.lootlog.hud.HUDLocationScreen;
 import com.nvda.lootlog.util.DelayedTask;
-import com.nvda.lootlog.util.ScoreboardUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.StringUtils;
 
 public class Command extends CommandBase {
 
