@@ -10,6 +10,7 @@ public class LocationHandler {
 
   private static final LocationHandler instance = new LocationHandler();
 
+  private long lastUpdated = System.currentTimeMillis();
   private Location location = Location.OTHER;
 
   public static LocationHandler getInstance() {
@@ -21,11 +22,14 @@ public class LocationHandler {
   }
 
   public void setLocation(Location location) {
+    this.lastUpdated = System.currentTimeMillis();
     this.location = location;
   }
 
   public void setLocationFromScoreboard(String name) {
     if (!name.equals("None")) this.setLocation(Location.fromScoreboardName(name));
+    else if (System.currentTimeMillis() - this.lastUpdated < 10000)
+      this.setLocation(Location.OTHER);
   }
 
   public enum Location {
