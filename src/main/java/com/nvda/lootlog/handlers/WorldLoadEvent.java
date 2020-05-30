@@ -1,8 +1,6 @@
 package com.nvda.lootlog.handlers;
 
 import com.nvda.lootlog.DragonHandler;
-import com.nvda.lootlog.SlayerHandler;
-import com.nvda.lootlog.util.ScoreboardUtils;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

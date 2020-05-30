@@ -24,6 +24,10 @@ public class LocationHandler {
     this.location = location;
   }
 
+  public void setLocationFromScoreboard(String name) {
+    if (!name.equals("None")) this.setLocation(Location.fromScoreboardName(name));
+  }
+
   public enum Location {
     THE_CATACOMBS("The Catacombs", null),
     THE_END("The End", DragonHUD.getInstance()),
