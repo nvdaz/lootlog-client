@@ -1,4 +1,4 @@
-package xyz.nvda.lootlog.handlers;
+package xyz.nvda.lootlog.listeners;
 
 import com.google.common.collect.ImmutableSet;
 import xyz.nvda.lootlog.network.ItemCollectHandler;
@@ -18,7 +18,6 @@ public class ClientConnectionHandler {
 
   private final Set<Object> listeners =
       ImmutableSet.of(
-          WorldLoadEvent.getInstance(),
           new DrawScreenEventHandler(),
           new ChatReceivedHandler(),
           new EntityJoinEvent(),

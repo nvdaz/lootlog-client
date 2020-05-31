@@ -1,6 +1,6 @@
 package xyz.nvda.lootlog;
 
-import xyz.nvda.lootlog.IBossHandler.LoadProvidersResult;
+import xyz.nvda.lootlog.bosses.IBossHandler.LoadProvidersResult;
 import xyz.nvda.lootlog.hud.DragonHUD;
 import xyz.nvda.lootlog.hud.HUDLocationScreen;
 import xyz.nvda.lootlog.util.DelayedTask;

@@ -1,4 +1,4 @@
-package xyz.nvda.lootlog;
+package xyz.nvda.lootlog.bosses;
 
 import java.util.function.Consumer;
 import net.minecraft.item.ItemStack;

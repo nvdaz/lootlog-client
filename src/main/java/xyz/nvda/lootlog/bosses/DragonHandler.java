@@ -1,13 +1,17 @@
-package xyz.nvda.lootlog;
+package xyz.nvda.lootlog.bosses;
 
 import com.apollographql.apollo.ApolloCall.Callback;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.exception.ApolloException;
+import xyz.nvda.lootlog.ChatPattern;
 import xyz.nvda.lootlog.ChatPattern.MatchType;
 import xyz.nvda.lootlog.Dragon.DragonOverview;
+import xyz.nvda.lootlog.Message;
 import xyz.nvda.lootlog.api.AddDragonMutation;
 import xyz.nvda.lootlog.api.AddDragonMutation.AddDragon;
+import xyz.nvda.lootlog.api.AddDragonMutation.Data;
+import xyz.nvda.lootlog.api.AddDragonMutation.Variables;
 import xyz.nvda.lootlog.api.GetMyDragonsQuery;
 import xyz.nvda.lootlog.api.GetMyDragonsQuery.CurrentUser;
 import xyz.nvda.lootlog.api.GetMyDragonsQuery.Dragon;
@@ -31,11 +35,11 @@ import net.minecraft.util.IChatComponent;
 
 public class DragonHandler
     extends BossHandler<
-        AddDragonMutation.Data,
-        AddDragonMutation.Variables,
-        AddDragonMutation,
-        DragonRewardInput,
-        DragonRewardType> {
+            Data,
+            Variables,
+            AddDragonMutation,
+            DragonRewardInput,
+            DragonRewardType> {
 
   private static final ChatPattern DRAGON_PATTERN =
       new ChatPattern(
@@ -155,7 +159,7 @@ public class DragonHandler
   }
 
   public void testItem(String itemName, int count) {
-    if (this.toIgnoreItems() || this.dragonType == null) return;
+    if (this.dragonType == null) return;
     Optional<ItemProvider> itemProvider =
         this.findItemProvider(provider -> provider.testItemName(itemName));
     if (itemProvider.isPresent()) {

@@ -4,7 +4,7 @@ import xyz.nvda.lootlog.ConfigurationHandler;
 import xyz.nvda.lootlog.Dragon;
 import xyz.nvda.lootlog.Dragon.DragonOverview;
 import xyz.nvda.lootlog.Dragon.DragonType;
-import xyz.nvda.lootlog.DragonHandler;
+import xyz.nvda.lootlog.bosses.DragonHandler;
 import xyz.nvda.lootlog.util.NumberUtil;
 import java.time.LocalDate;
 import java.time.ZoneId;

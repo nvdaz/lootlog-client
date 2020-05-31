@@ -1,4 +1,4 @@
-package xyz.nvda.lootlog;
+package xyz.nvda.lootlog.bosses;
 
 import com.apollographql.apollo.ApolloCall.Callback;
 import com.apollographql.apollo.api.Mutation;
@@ -7,10 +7,11 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy.ExpirePolicy;
 import com.apollographql.apollo.exception.ApolloException;
+import xyz.nvda.lootlog.ApolloProvider;
+import xyz.nvda.lootlog.Message;
 import xyz.nvda.lootlog.api.ItemProvidersQuery;
 import xyz.nvda.lootlog.api.ItemProvidersQuery.Data;
 import xyz.nvda.lootlog.api.type.RewardTestMode;
-import xyz.nvda.lootlog.handlers.WorldLoadEvent;
 import xyz.nvda.lootlog.util.ItemUtil;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -119,10 +120,6 @@ public abstract class BossHandler<
 
   protected Optional<ItemProvider> findItemProvider(Predicate<? super ItemProvider> predicate) {
     return this.itemProviders.stream().filter(predicate).findFirst();
-  }
-
-  protected boolean toIgnoreItems() {
-    return System.currentTimeMillis() - WorldLoadEvent.getInstance().lastWorldLoad < 3000;
   }
 
   public ItemStack getItemStack(T rewardType, int count) {

@@ -1,7 +1,7 @@
 package xyz.nvda.lootlog.hud;
 
 import xyz.nvda.lootlog.ConfigurationHandler;
-import xyz.nvda.lootlog.SlayerHandler;
+import xyz.nvda.lootlog.bosses.SlayerHandler;
 import xyz.nvda.lootlog.api.NotableSlayersQuery.NotableSlayer;
 import xyz.nvda.lootlog.util.NumberUtil;
 import java.util.List;

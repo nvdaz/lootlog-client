@@ -1,4 +1,4 @@
-package xyz.nvda.lootlog.handlers;
+package xyz.nvda.lootlog.listeners;
 
 import xyz.nvda.lootlog.ApolloProvider;
 import xyz.nvda.lootlog.Message;
