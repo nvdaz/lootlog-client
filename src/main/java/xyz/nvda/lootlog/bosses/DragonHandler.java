@@ -4,6 +4,19 @@ import com.apollographql.apollo.ApolloCall.Callback;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.exception.ApolloException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.IChatComponent;
 import xyz.nvda.lootlog.ChatPattern;
 import xyz.nvda.lootlog.ChatPattern.MatchType;
 import xyz.nvda.lootlog.Dragon.DragonOverview;
@@ -19,27 +32,9 @@ import xyz.nvda.lootlog.api.ItemProvidersQuery;
 import xyz.nvda.lootlog.api.type.DragonRewardInput;
 import xyz.nvda.lootlog.api.type.DragonRewardType;
 import xyz.nvda.lootlog.api.type.DragonType;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.IChatComponent;
 
 public class DragonHandler
-    extends BossHandler<
-            Data,
-            Variables,
-            AddDragonMutation,
-            DragonRewardInput,
-            DragonRewardType> {
+    extends BossHandler<Data, Variables, AddDragonMutation, DragonRewardInput, DragonRewardType> {
 
   private static final ChatPattern DRAGON_PATTERN =
       new ChatPattern(
@@ -243,8 +238,21 @@ public class DragonHandler
     }
   }
 
-  protected Stream<ItemProvider> mapDataToItemProviders(ItemProvidersQuery.Data data) {
-    return data.dragonItemProviders().stream().map(ItemProvider::new);
+  @Override
+  protected List<ItemProvider> mapProviders(List<ItemProvidersQuery.ItemProvider> itemProviders) {
+    return itemProviders.stream()
+        .map(ItemProvidersQuery.ItemProvider::asDragonItemProvider)
+        .filter(Objects::nonNull)
+        .map(
+            itemProvider ->
+                new ItemProvider(
+                    itemProvider.test(),
+                    itemProvider.mode(),
+                    itemProvider.dragonItem(),
+                    itemProvider.minecraftItem(),
+                    itemProvider.texture(),
+                    Optional.ofNullable(itemProvider.metadata()).orElse(0)))
+        .collect(Collectors.toList());
   }
 
   public void loadHUDData() {

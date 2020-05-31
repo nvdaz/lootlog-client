@@ -7,13 +7,6 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy.ExpirePolicy;
 import com.apollographql.apollo.exception.ApolloException;
-import xyz.nvda.lootlog.ApolloProvider;
-import xyz.nvda.lootlog.Message;
-import xyz.nvda.lootlog.api.ItemProvidersQuery;
-import xyz.nvda.lootlog.api.ItemProvidersQuery.Data;
-import xyz.nvda.lootlog.api.type.RewardTestMode;
-import xyz.nvda.lootlog.util.ItemUtil;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -29,6 +21,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.StringUtils;
+import xyz.nvda.lootlog.ApolloProvider;
+import xyz.nvda.lootlog.Message;
+import xyz.nvda.lootlog.api.ItemProvidersQuery;
+import xyz.nvda.lootlog.api.type.RewardTestMode;
+import xyz.nvda.lootlog.util.ItemUtil;
 
 public abstract class BossHandler<
         D extends Operation.Data,
@@ -55,7 +52,8 @@ public abstract class BossHandler<
 
   public abstract void testItem(String itemName, int count);
 
-  protected abstract Stream<ItemProvider> mapDataToItemProviders(ItemProvidersQuery.Data data);
+  protected abstract List<ItemProvider> mapProviders(
+      List<ItemProvidersQuery.ItemProvider> itemProviders);
 
   protected abstract M build();
 
@@ -145,41 +143,25 @@ public abstract class BossHandler<
         .query(itemProvidersQuery)
         .httpCachePolicy(itemProvidersCachePolicy)
         .enqueue(
-            new Callback<Data>() {
+            new Callback<ItemProvidersQuery.Data>() {
               @Override
-              public void onResponse(@Nonnull Response<Data> response) {
-                if (response.data() == null) {
-                  if (errorCount < 1) loadProviders(consumer, errorCount + 1);
-                  else consumer.accept(LoadProvidersResult.FAILURE);
-                  return;
-                }
-                itemProviders.clear();
+              public void onResponse(@Nonnull Response<ItemProvidersQuery.Data> response) {
+                Optional<List<ItemProvidersQuery.ItemProvider>> providers =
+                    Optional.of(response)
+                        .map(Response::data)
+                        .map(ItemProvidersQuery.Data::itemProviders);
 
-                mapDataToItemProviders(response.data()).forEach(itemProviders::add);
-                consumer.accept(LoadProvidersResult.SUCCESS);
-              }
-
-              @Override
-              public void onFailure(@Nonnull ApolloException ex) {
-                ex.printStackTrace();
-                if (errorCount < 1) loadProviders(consumer, errorCount + 1);
+                if (providers.isPresent()) {
+                  itemProviders.clear();
+                  itemProviders.addAll(mapProviders(providers.get()));
+                  consumer.accept(LoadProvidersResult.SUCCESS);
+                } else if (errorCount < 1) loadProviders(consumer, errorCount + 1);
                 else consumer.accept(LoadProvidersResult.FAILURE);
               }
+
+              @Override
+              public void onFailure(@Nonnull ApolloException ex) {}
             });
-  }
-
-  interface GeneratedItemProvider<RewardType> {
-    Pattern test();
-
-    RewardTestMode mode();
-
-    RewardType item();
-
-    String minecraftItem();
-
-    String texture();
-
-    int metadata();
   }
 
   static class BossItemProvider<T> {
@@ -190,58 +172,20 @@ public abstract class BossHandler<
     final String texture;
     final int metadata;
 
-    @SuppressWarnings("unchecked")
-    public <P> BossItemProvider(P generatedItemProvider) {
-      this(
-          (GeneratedItemProvider<T>)
-              Proxy.newProxyInstance(
-                  GeneratedItemProvider.class.getClassLoader(),
-                  new Class[] {GeneratedItemProvider.class},
-                  (proxy, method, args) -> {
-                    try {
-                      Class<?> proxiedClass = generatedItemProvider.getClass();
-                      switch (method.getName()) {
-                        case "test":
-                          return proxiedClass
-                              .getDeclaredMethod("test")
-                              .invoke(generatedItemProvider);
-                        case "mode":
-                          return proxiedClass
-                              .getDeclaredMethod("mode")
-                              .invoke(generatedItemProvider);
-                        case "item":
-                          return proxiedClass
-                              .getDeclaredMethod("item")
-                              .invoke(generatedItemProvider);
-                        case "minecraftItem":
-                          return proxiedClass
-                              .getDeclaredMethod("minecraftItem")
-                              .invoke(generatedItemProvider);
-                        case "texture":
-                          return proxiedClass
-                              .getDeclaredMethod("texture")
-                              .invoke(generatedItemProvider);
-                        case "metadata":
-                          return Optional.ofNullable(
-                                  proxiedClass
-                                      .getDeclaredMethod("metadata")
-                                      .invoke(generatedItemProvider))
-                              .orElse(0);
-                      }
-                    } catch (Exception ex) {
-                      ex.printStackTrace();
-                    }
-                    return null;
-                  }));
-    }
+    BossItemProvider(
+        Pattern test,
+        RewardTestMode mode,
+        T rewardType,
+        String minecraftItem,
+        String texture,
+        int metadata) {
 
-    public BossItemProvider(GeneratedItemProvider<T> itemProvider) {
-      this.test = itemProvider.test();
-      this.mode = itemProvider.mode();
-      this.rewardType = itemProvider.item();
-      this.item = ItemUtil.getItem(itemProvider.minecraftItem());
-      this.texture = itemProvider.texture();
-      this.metadata = itemProvider.metadata();
+      this.test = test;
+      this.mode = mode;
+      this.rewardType = rewardType;
+      this.item = ItemUtil.getItem(minecraftItem);
+      this.texture = texture;
+      this.metadata = metadata;
     }
 
     public boolean testChatMessage(IChatComponent chatComponent) {
@@ -275,8 +219,14 @@ public abstract class BossHandler<
   }
 
   protected class ItemProvider extends BossItemProvider<T> {
-    public <P> ItemProvider(P generatedItemProvider) {
-      super(generatedItemProvider);
+    ItemProvider(
+        Pattern test,
+        RewardTestMode mode,
+        T rewardType,
+        String minecraftItem,
+        String texture,
+        int metadata) {
+      super(test, mode, rewardType, minecraftItem, texture, metadata);
     }
   }
 

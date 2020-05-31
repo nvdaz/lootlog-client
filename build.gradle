@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 
 buildscript {
     repositories {
@@ -18,6 +17,8 @@ buildscript {
     }
 
 }
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 
 apply plugin: 'java'
 apply plugin: 'idea'

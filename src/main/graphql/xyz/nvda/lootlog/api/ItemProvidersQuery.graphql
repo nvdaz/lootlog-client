@@ -1,26 +1,18 @@
 query ItemProvidersQuery {
-  dragonItemProviders {
+  itemProviders {
     test
     mode
     minecraftItem
     texture
-    item
     metadata
-  }
-  slayerItemProviders {
-    test
-    mode
-    minecraftItem
-    texture
-    item
-    metadata
-  }
-  golemItemProviders {
-    test
-    mode
-    minecraftItem
-    texture
-    item
-    metadata
+    ... on DragonItemProvider {
+      dragonItem: item
+    }
+    ... on SlayerItemProvider {
+      slayerItem: item
+    }
+    ... on GolemItemProvider {
+      golemItem: item
+    }
   }
 }

@@ -22,6 +22,6 @@ public class ChatReceivedHandler {
     Matcher nickMatcher = NICK_REGEX.matcher(message);
 
     if (nickMatcher.matches()) config.setNickname(nickMatcher.group(1));
-    else LootLog.bossHandlers.stream().anyMatch(bossHandler -> bossHandler.testChat(e.message));
+    else LootLog.bossHandlers.forEach(bossHandler -> bossHandler.testChat(e.message));
   }
 }
