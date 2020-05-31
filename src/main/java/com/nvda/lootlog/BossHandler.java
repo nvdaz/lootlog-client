@@ -7,9 +7,6 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy.ExpirePolicy;
 import com.apollographql.apollo.exception.ApolloException;
-import com.nvda.lootlog.BossHandler.BossItemProvider;
-import com.nvda.lootlog.BossHandler.BossReward;
-import com.nvda.lootlog.IBossHandler.LoadProvidersResult;
 import com.nvda.lootlog.api.ItemProvidersQuery;
 import com.nvda.lootlog.api.ItemProvidersQuery.Data;
 import com.nvda.lootlog.api.type.RewardTestMode;
@@ -36,9 +33,9 @@ public abstract class BossHandler<
         D extends Operation.Data,
         V extends Operation.Variables,
         M extends Mutation<D, D, V>,
-                                 I,
-//        R extends BossReward<?, T, ? extends BossItemProvider<T>>,
-        T extends Enum<T>> {
+        I,
+        T extends Enum<T>>
+    implements IBossHandler<T> {
 
   protected static final ApolloProvider apolloProvider = ApolloProvider.getInstance();
   protected static final ExpirePolicy itemProvidersCachePolicy =
@@ -49,9 +46,9 @@ public abstract class BossHandler<
 
   protected final List<Reward> rewards = new ArrayList<>();
 
-//  protected BossHandler(List<R> rewards) {
-//    this.rewards = rewards;
-//  }
+  //  protected BossHandler(List<R> rewards) {
+  //    this.rewards = rewards;
+  //  }
 
   public abstract boolean testChat(IChatComponent chatComponent);
 

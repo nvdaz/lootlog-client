@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IChatComponent;
 
-public interface IBossHandler<T> {
+public interface IBossHandler<T extends Enum<T>> {
   boolean testChat(IChatComponent chatComponent);
 
   void testItem(String item, int count);

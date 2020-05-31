@@ -35,7 +35,6 @@ public class DragonHandler
         AddDragonMutation.Variables,
         AddDragonMutation,
         DragonRewardInput,
-        //        DragonReward,
         DragonRewardType> {
 
   private static final ChatPattern DRAGON_PATTERN =
