@@ -4,9 +4,9 @@ import com.apollographql.apollo.ApolloCall.Callback;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.exception.ApolloException;
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,17 +42,11 @@ public class SlayerHandler
   private static final SlayerHandler instance = new SlayerHandler();
 
   private static final Map<Integer, Integer> slayerXpMap =
-      new HashMap<Integer, Integer>() {
-        {
-          put(1, 5);
-          put(2, 25);
-          put(3, 100);
-          put(4, 500);
-        }
-      };
+      ImmutableMap.of(1, 5, 2, 25, 3, 100, 4, 500);
   private final Map<SlayerType, NotableSlayersQuery> notableSlayersQueryMap =
-      Arrays.stream(SlayerType.values())
-          .collect(Collectors.toMap(type -> type, type -> new NotableSlayersQuery(type, 3)));
+      ImmutableMap.copyOf(
+          Arrays.stream(SlayerType.values())
+              .collect(Collectors.toMap(type -> type, type -> new NotableSlayersQuery(type, 3))));
   private CurrentUser currentUser;
   private DelayedTask delayedTask;
   private SlayerType slayerType;
