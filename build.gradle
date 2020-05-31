@@ -45,8 +45,8 @@ apollo {
 
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
-version = "2.1.0-alpha.0.7"
-group= "com.nvda.lootlog"
+version = "2.1.0-alpha.0.8"
+group= "xyz.nvda.lootlog"
 archivesBaseName = "lootlog"
 
 minecraft {
@@ -85,7 +85,7 @@ reobf {
 
 task relocateShadowJar(type: ConfigureShadowRelocation) {
     target = tasks.shadowJar
-    prefix = "com.nvda.lootlog.shadow" // Default value is "shadow"
+    prefix = "xyz.nvda.lootlog.shadow" // Default value is "shadow"
 
 }
 
