@@ -1,5 +1,3 @@
-
-// For those who want the bleeding edge
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 
 buildscript {
@@ -35,8 +33,8 @@ idea {
 }
 
 apollo {
-    schemaFilePath = "src/main/graphql/com/nvda/lootlog/api/schema.json"
-    outputPackageName = "com.nvda.lootlog.api"
+    schemaFilePath = "src/main/graphql/xyz/nvda/lootlog/api/schema.json"
+    outputPackageName = "xyz.nvda.lootlog.api"
     customTypeMapping = [
             RegExp: "java.util.regex.Pattern",
             Date :"java.time.Instant"
@@ -77,15 +75,9 @@ shadowJar {
     exclude 'xyz.nvda.sbnotifications'
 }
 
-reobf {
-    shadowJar {
-        exclude 'xyz.nvda.sbnotifications'
-    }
-}
-
 task relocateShadowJar(type: ConfigureShadowRelocation) {
     target = tasks.shadowJar
-    prefix = "xyz.nvda.lootlog.shadow" // Default value is "shadow"
+    prefix = "xyz.nvda.lootlog.shadow"
 
 }
 
