@@ -18,6 +18,7 @@ buildscript {
 }
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+import net.minecraftforge.gradle.user.IReobfuscator
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -73,6 +74,12 @@ dependencies {
 shadowJar {
     configurations = [project.configurations.shadow]
     exclude 'xyz.nvda.sbnotifications'
+}
+
+reobf {
+    shadowJar {
+        mappingType = 'SEARGE'
+    }
 }
 
 task relocateShadowJar(type: ConfigureShadowRelocation) {
